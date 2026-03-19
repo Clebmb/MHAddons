@@ -1,0 +1,39 @@
+services:
+  mhtv:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mhtv
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      PORT: 7000
+      BASE_URL: http://localhost:7000
+      TVAPP_BASE_URL: http://tvapp:4124
+      TVAPP_HEALTH_URL: http://tvapp:4124/api/health
+      TVAPP_M3U_PATH: /shared/tvapp/playlist.m3u8
+      TVAPP_XMLTV_PATH: /shared/tvapp/xmltv.xml
+    ports:
+      - "7000:7000"
+    volumes:
+      - tvapp_shared:/shared/tvapp
+    depends_on:
+      - tvapp
+
+  tvapp:
+    image: ghcr.io/thebinaryninja/tvapp2:latest
+    container_name: tvapp
+    restart: unless-stopped
+    environment:
+      TZ: Etc/UTC
+      WEB_PORT: 4124
+      FILE_M3U: playlist.m3u8
+      FILE_EPG: xmltv.xml
+      FILE_GZP: xmltv.xml.gz
+      DIR_RUN: /usr/bin/app
+    volumes:
+      - tvapp_shared:/usr/bin/app
+
+volumes:
+  tvapp_shared:

@@ -1,0 +1,8 @@
+{
+  "name": "mh-addons-dev",
+  "private": true,
+  "scripts": {
+    "dashboard": "node scripts/dashboard.mjs",
+    "dev": "node scripts/dev.mjs"
+  }
+}
