@@ -19,7 +19,7 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
 const navItems: NavItem[] = [
-  { id: 'presets', label: 'Presets', icon: 'auto_awesome' },
+  { id: 'presets', label: 'About/Presets', icon: 'auto_awesome' },
   { id: 'general', label: 'General', icon: 'settings' },
   { id: 'integrations', label: 'Integrations', icon: 'extension' },
   { id: 'providers', label: 'Meta Providers', icon: 'database' },
@@ -168,7 +168,7 @@ function AppContent() {
   }, []);
 
   return (
-    <div className="flex h-screen w-full bg-[#122017] overflow-hidden font-sans dark text-foreground">
+    <div className="flex h-screen w-full bg-[#0b141f] overflow-hidden font-sans dark text-foreground">
       {/* Sidebar for Desktop / Drawer for Mobile */}
       <Sidebar
         navItems={navItems}
@@ -187,13 +187,13 @@ function AppContent() {
         <MobileHeader onToggle={() => setIsSidebarOpen(true)} />
 
         {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto relative scroll-smooth bg-[#122017]">
+        <main className="flex-1 overflow-y-auto relative scroll-smooth bg-[#0b141f]">
           {/* Background Decorations */}
-          <div className="fixed top-0 right-0 w-[800px] h-[800px] bg-[#39E079]/10 rounded-full blur-[120px] -mr-96 -mt-96 pointer-events-none z-0"></div>
-          <div className="fixed bottom-0 left-0 w-[600px] h-[600px] bg-[#437f34]/10 rounded-full blur-[120px] -ml-64 -mb-64 pointer-events-none z-0"></div>
+          <div className="fixed top-0 right-0 w-[800px] h-[800px] bg-[#3ce58a]/10 rounded-full blur-[120px] -mr-96 -mt-96 pointer-events-none z-0"></div>
+          <div className="fixed bottom-0 left-0 w-[600px] h-[600px] bg-[#1a4e76]/10 rounded-full blur-[120px] -ml-64 -mb-64 pointer-events-none z-0"></div>
 
           <div className="relative z-10 p-4 sm:p-6 md:p-10 max-w-6xl mx-auto w-full">
-            <Header />
+            <Header currentPage={currentPage} />
 
             {/* Custom Description Blurb */}
             {config.apiKeys.customDescriptionBlurb && (
@@ -203,7 +203,7 @@ function AppContent() {
               />
             )}
 
-            <Card className="w-full shadow-2xl mb-32 bg-[#101923] border-[#283039]">
+            <Card className="mb-32 w-full rounded-[24px] border-white/10 bg-[rgba(22,35,52,0.8)] shadow-[0_30px_80px_rgba(0,0,0,0.35)] backdrop-blur-[16px]">
               <CardContent className="p-4 md:p-8">
                 <SettingsLayout forcedTab={currentPage} />
               </CardContent>
@@ -227,7 +227,7 @@ function AppContent() {
           setIsLoginOpen(next);
         }}
       >
-        <DialogContent className="sm:max-w-md bg-[#101923] border-[#283039] text-white">
+        <DialogContent className="sm:max-w-md rounded-[24px] border-white/10 bg-[rgba(22,35,52,0.92)] text-white backdrop-blur-[16px]">
           <DialogHeader>
             <DialogTitle className="font-heading text-xl">Load Saved Configuration</DialogTitle>
             <DialogDescription className="text-white/60">
@@ -333,4 +333,3 @@ function App() {
 }
 
 export default App;
-

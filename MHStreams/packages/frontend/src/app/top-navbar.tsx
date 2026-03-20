@@ -48,7 +48,7 @@ export function TopNavbar(props: TopNavbarProps) {
       <div
         data-top-navbar
         className={cn(
-          'w-full h-[5rem] relative overflow-hidden flex items-center',
+          'w-full h-[5rem] relative overflow-hidden flex items-center border-b border-white/10 bg-[rgba(8,17,26,0.92)] backdrop-blur-[20px]',
           'lg:hidden'
         )}
       >
@@ -61,6 +61,9 @@ export function TopNavbar(props: TopNavbarProps) {
             className="flex items-center w-full gap-3"
           >
             <AppSidebarTrigger />
+            <div className="font-heading text-lg font-bold tracking-[-0.03em] text-white">
+              MH<span className="text-[#3ce58a]">Streams</span>
+            </div>
             <div
               data-top-navbar-content-separator
               className="flex flex-1"

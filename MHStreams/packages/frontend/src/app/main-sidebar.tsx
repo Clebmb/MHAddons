@@ -216,15 +216,23 @@ export function MainSidebar() {
         <div className="flex flex-col w-full h-full">
           <div className="h-20 flex items-center px-6 border-b border-white/10 mb-4">
             <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center shrink-0">
-                <img
-                  src="/logo.webp"
-                  alt="Logo"
-                  className="w-9 h-9 object-contain drop-shadow-[0_0_8px_rgba(57,224,121,0.5)]"
-                />
+              <div className="flex h-11 w-11 items-center justify-center rounded-[14px] bg-[linear-gradient(135deg,#3ce58a,#1f8f63)] shadow-[0_16px_30px_rgba(60,229,138,0.25)]">
+                <svg
+                  className="h-5 w-5"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M7 5.5L18 12L7 18.5V5.5Z"
+                    fill="none"
+                    stroke="#ffffff"
+                    strokeWidth="2.4"
+                    strokeLinejoin="round"
+                  />
+                </svg>
               </div>
-              <div className="font-heading font-bold text-xl tracking-tight text-white">
-                MH<span className="text-[#39E079]">Streams</span>
+              <div className="font-heading text-xl font-bold tracking-[-0.03em] text-white">
+                MH<span className="text-[#3ce58a]">Streams</span>
               </div>
             </div>
           </div>
@@ -240,27 +248,25 @@ export function MainSidebar() {
           />
         </div>
 
-        <div className="p-6 gap-3 flex flex-col border-t border-white/10 mt-auto">
-          <div className="rounded-xl border border-white/10 bg-white/5 p-3">
-            <div className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-[#B0C4DE]">
+        <div className="mt-auto flex flex-col gap-3 border-t border-white/10 p-6">
+          <div className="mb-[14px] grid gap-[10px]">
+            <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#99a8bc]">
               Other Addons
-            </div>
-            <div className="flex flex-col gap-2">
-              {DEV_ADDON_LINKS.map((link) => (
-                <Button
-                  key={link.name}
-                  intent="gray"
-                  size="md"
-                  className="w-full rounded-xl bg-white/5 border border-white/10 text-[#B0C4DE] hover:bg-white/10 hover:text-white"
-                  leftIcon={<BiLinkExternal className="text-xl" />}
-                  onClick={() => {
-                    openAddon(link.port);
-                  }}
-                >
-                  {link.name}
-                </Button>
-              ))}
-            </div>
+            </p>
+            {DEV_ADDON_LINKS.map((link) => (
+              <Button
+                key={link.name}
+                intent="gray"
+                size="md"
+                className="h-12 w-full justify-start rounded-[16px] border border-white/10 bg-transparent px-4 font-bold text-[#f4f7fb] hover:bg-white/5 hover:text-white"
+                leftIcon={<BiLinkExternal className="text-xl text-[#3ce58a]" />}
+                onClick={() => {
+                  openAddon(link.port);
+                }}
+              >
+                {link.name}
+              </Button>
+            ))}
           </div>
 
           <Tooltip
@@ -269,7 +275,7 @@ export function MainSidebar() {
               <Button
                 intent="primary"
                 size="md"
-                className="w-full rounded-xl bg-[#39E079] text-black hover:bg-[#39E079]/90 shadow-lg"
+                className="w-full rounded-[14px] bg-[#3ce58a] text-[#08111a] hover:bg-[#5ae78f] shadow-[0_16px_30px_rgba(60,229,138,0.25)]"
                 leftIcon={<BiHeart className="text-xl text-black" />}
                 onClick={() => {
                   donationModal.open();
@@ -289,7 +295,7 @@ export function MainSidebar() {
               <Button
                 intent="gray"
                 size="md"
-                className="w-full rounded-xl bg-white/5 border border-white/10 text-[#B0C4DE] hover:bg-white/10 hover:text-white"
+                className="w-full rounded-[14px] border border-white/10 bg-transparent text-[#99a8bc] hover:bg-white/5 hover:text-white"
                 leftIcon={
                   user.uuid && user.password ? (
                     <BiLogOutCircle className="text-xl" />

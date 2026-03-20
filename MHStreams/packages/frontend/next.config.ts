@@ -1,11 +1,12 @@
 import type { NextConfig } from 'next';
 
 const pathToCoreFromFrontend = '../core/src';
+const isProductionBuild = process.env.NODE_ENV === 'production';
 
 const nextConfig: NextConfig = {
   /* config options here */
   reactStrictMode: false,
-  output: 'export',
+  output: isProductionBuild ? 'export' : undefined,
   images: {
     unoptimized: true,
   },

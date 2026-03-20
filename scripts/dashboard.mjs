@@ -1,5 +1,7 @@
 import http from 'node:http';
 import net from 'node:net';
+import fs from 'node:fs';
+import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 export const DASHBOARD_PORT = 4100;
@@ -8,7 +10,8 @@ export const APPS = [
   {
     id: 'mhstreams',
     name: 'MHStreams',
-    description: 'Unified stream addon config UI',
+    description: 'Streaming media aggregation addon',
+    icon: 'movie',
     url: 'http://localhost:3000',
     links: [
       { label: 'Open Addon', url: 'http://localhost:3000' },
@@ -17,7 +20,8 @@ export const APPS = [
   {
     id: 'mhmetadata',
     name: 'MHMetadata',
-    description: 'Metadata addon UI and local backend',
+    description: 'Metadata Aggregation addon',
+    icon: 'database',
     url: 'http://localhost:5173',
     links: [
       { label: 'Open Addon', url: 'http://localhost:5173' },
@@ -26,13 +30,15 @@ export const APPS = [
   {
     id: 'mhtv',
     name: 'MHTV',
-    description: 'TV addon config UI and manifest host',
+    description: 'Live TV/IPTV Addon',
+    icon: 'live_tv',
     url: 'http://localhost:7000',
     links: [{ label: 'Open Addon', url: 'http://localhost:7000' }],
   },
 ];
 
 const STATUS_TIMEOUT_MS = 800;
+const DASHBOARD_FAVICON_PATH = path.resolve('favicon.ico');
 
 function checkUrl(urlString) {
   const { hostname, port, protocol } = new URL(urlString);
@@ -65,8 +71,10 @@ function renderDashboard() {
       <article class="card" data-app="${app.id}">
         <div class="card-header">
           <div>
-            <p class="eyebrow">Local Dev</p>
-            <h2>${app.name}</h2>
+            <div class="addon-title">
+              <span class="material-symbols-outlined addon-icon">${app.icon}</span>
+              <h2>${app.name}</h2>
+            </div>
           </div>
           <span class="status" data-status="${app.id}">Checking</span>
         </div>
@@ -89,7 +97,9 @@ function renderDashboard() {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MH Addons Dashboard</title>
+  <title>MH Addon Dashboard</title>
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
   <style>
     :root {
       color-scheme: dark;
@@ -105,6 +115,18 @@ function renderDashboard() {
     }
 
     * { box-sizing: border-box; }
+
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined' !important;
+      font-weight: normal;
+      font-style: normal;
+      font-size: 24px;
+      line-height: 1;
+      display: inline-block;
+      white-space: nowrap;
+      direction: ltr;
+      -webkit-font-smoothing: antialiased;
+    }
 
     body {
       margin: 0;
@@ -124,6 +146,7 @@ function renderDashboard() {
 
     .hero {
       margin-bottom: 28px;
+      text-align: center;
     }
 
     .eyebrow {
@@ -168,6 +191,36 @@ function renderDashboard() {
       color: var(--muted);
       line-height: 1.65;
       font-size: 1rem;
+    }
+
+    .hero-logo {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 18px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, var(--accent), #1f8f63);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 16px 30px rgba(60, 229, 138, 0.25);
+    }
+
+    .hero-logo-link {
+      display: inline-flex;
+      text-decoration: none;
+    }
+
+    .hero-logo svg {
+      width: 30px;
+      height: 30px;
+      display: block;
+    }
+
+    .hero-logo path {
+      fill: none;
+      stroke: #ffffff;
+      stroke-width: 2.4;
+      stroke-linejoin: round;
     }
 
     .meta {
@@ -220,6 +273,17 @@ function renderDashboard() {
       gap: 16px;
       align-items: flex-start;
       margin-bottom: 14px;
+    }
+
+    .addon-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .addon-icon {
+      color: var(--accent);
+      font-size: 1.5rem;
     }
 
     .status {
@@ -287,6 +351,7 @@ function renderDashboard() {
     .footer {
       margin-top: 24px;
       font-size: 0.92rem;
+      text-align: center;
     }
 
     @media (max-width: 980px) {
@@ -301,6 +366,13 @@ function renderDashboard() {
   <main>
     <section class="hero">
       <p class="eyebrow"><a class="eyebrow-link" href="https://mediahoard.pages.dev" target="_blank" rel="noreferrer">MediaHoard</a></p>
+      <a class="hero-logo-link" href="https://mediahoard.pages.dev" target="_blank" rel="noreferrer" aria-label="Open MediaHoard">
+        <div class="hero-logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M7 5.5L18 12L7 18.5V5.5Z" />
+          </svg>
+        </div>
+      </a>
       <h1>MH Addon Dashboard</h1>
     </section>
 
@@ -366,6 +438,18 @@ export function startDashboardServer(port = DASHBOARD_PORT) {
       const payload = await getAppStatuses();
       res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
       res.end(JSON.stringify(payload));
+      return;
+    }
+
+    if (req.url === '/favicon.ico') {
+      try {
+        const favicon = fs.readFileSync(DASHBOARD_FAVICON_PATH);
+        res.writeHead(200, { 'Content-Type': 'image/x-icon' });
+        res.end(favicon);
+      } catch {
+        res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+        res.end('Not found');
+      }
       return;
     }
 

@@ -20,7 +20,6 @@ import { FaGithub, FaDiscord, FaChevronRight } from 'react-icons/fa';
 import { BiDonateHeart, BiLogInCircle, BiLogOutCircle } from 'react-icons/bi';
 import { AiOutlineDiscord } from 'react-icons/ai';
 import { FiGithub } from 'react-icons/fi';
-import Image from 'next/image';
 import React, { useState, useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -325,9 +324,9 @@ function Content() {
   return (
     <>
       <div className="flex flex-col gap-4 w-full">
-        {/* Top section: Responsive logo/name/about layout */}
-        <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-start w-full relative">
-          <div className="flex absolute top-0 right-0 z-10">
+        {/* Top section: Header layout */}
+        <div className="relative flex w-full flex-col gap-4">
+          <div className="absolute right-0 top-0 z-10">
             <Button
               intent="primary-outline"
               size="md"
@@ -347,21 +346,10 @@ function Content() {
             </Button>
           </div>
 
-          {/* Large logo left */}
-          <div className="flex-shrink-0 flex justify-center md:justify-start w-full md:w-auto p-2">
-            <Image
-              src={userData.addonLogo || '/logo.webp'}
-              alt="Logo"
-              width={128}
-              height={128}
-              className="rounded-lg shadow-lg"
-            />
-          </div>
-          {/* Name, version, about right */}
-          <div className="flex flex-col gap-2 w-full min-w-0 lg:pr-36">
+          <div className="flex w-full min-w-0 flex-col gap-2 lg:pr-36">
             <div className="flex flex-col md:flex-row md:items-end md:gap-4">
               <div className="flex items-center gap-2 min-w-0">
-                <span className="text-3xl md:text-4xl font-bold tracking-tight text-gray-100 truncate min-w-0">
+                <span className="min-w-0 truncate bg-[linear-gradient(135deg,#ffffff_0%,#3ce58a_70%)] bg-clip-text font-heading text-[clamp(2.6rem,6vw,4.4rem)] font-bold leading-[1.02] tracking-[-0.03em] text-transparent">
                   {addonName}
                 </span>
                 <IconButton
@@ -399,7 +387,7 @@ function Content() {
               </div>
 
             </div>
-            <div className="text-xs md:text-sm text-[--muted] font-medium mb-2">
+            <div className="mb-2 text-xs font-medium text-[--muted] md:text-sm">
               {addonDescription === `MHStreams is a fork of AIOStreams (created by Viren070)` ? (
                 <>
                   MHStreams is a fork of <a href="https://github.com/Viren070/AIOStreams" target="_blank" rel="noopener noreferrer" className="italic hover:underline text-white">AIOStreams</a> (created by Viren070), optimized for <a href="https://mediahoard.pages.dev" target="_blank" rel="noopener noreferrer" className="text-[#39E079] hover:underline font-bold">MediaHoard</a>.

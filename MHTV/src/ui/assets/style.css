@@ -203,6 +203,11 @@ nav {
 .cross-link {
     width: 100%;
     justify-content: flex-start;
+    text-decoration: none;
+}
+
+.cross-link .material-symbols-outlined {
+    color: var(--color-primary);
 }
 
 .sidebar-action {

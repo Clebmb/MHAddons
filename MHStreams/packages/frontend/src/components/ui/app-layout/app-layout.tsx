@@ -254,7 +254,7 @@ export const AppLayoutContent = React.forwardRef<
   return (
     <main
       ref={ref}
-      className={cn(AppLayoutContentAnatomy.root(), 'relative overflow-hidden bg-[#122017]', className)}
+      className={cn(AppLayoutContentAnatomy.root(), 'relative overflow-hidden bg-[#0b141f]', className)}
       {...rest}
     >
       {/* Background Decorations */}

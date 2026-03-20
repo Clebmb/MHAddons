@@ -29,35 +29,28 @@
   }
 
   .dark {
-    --background: 145 29% 10%;
-    /* #122017 */
+    --background: 210 43% 8%;
     --foreground: 0 0% 100%;
-    --card: 213 39% 10%;
-    /* #101923 */
+    --card: 212 41% 15%;
     --card-foreground: 0 0% 100%;
-    --popover: 213 39% 10%;
+    --popover: 212 41% 15%;
     --popover-foreground: 0 0% 100%;
-    --primary: 145 73% 55%;
-    /* #39E079 */
-    --primary-foreground: 145 29% 5%;
-    --secondary: 108 42% 35%;
-    /* #437f34 */
+    --primary: 145 76% 57%;
+    --primary-foreground: 210 53% 7%;
+    --secondary: 212 45% 18%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 213 39% 15%;
+    --muted: 212 41% 15%;
     --muted-foreground: 214 20% 70%;
     --accent: 145 73% 55%;
-    --accent-foreground: 145 29% 5%;
+    --accent-foreground: 210 53% 7%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 100%;
-    --border: 213 18% 20%;
-    /* #283039 roughly */
+    --border: 0 0% 100% / 0.10;
     --input: 0 0% 100% / 0.05;
-    --ring: 145 73% 55%;
+    --ring: 145 76% 57%;
 
-    --sidebar: 213 39% 10%;
-    /* #101923 */
+    --sidebar: 211 53% 7%;
     --text-light: 214 31% 78%;
-    /* #B0C4DE */
   }
 }
 
@@ -86,6 +79,10 @@
 
   body {
     @apply bg-background text-foreground;
+    background:
+      radial-gradient(circle at top right, rgba(60, 229, 138, 0.15), transparent 30%),
+      radial-gradient(circle at bottom left, rgba(26, 78, 118, 0.18), transparent 25%),
+      #0b141f;
   }
 }
 

@@ -8,18 +8,15 @@ interface MobileHeaderProps {
 
 const MobileHeader: React.FC<MobileHeaderProps> = ({ onToggle }) => {
     return (
-        <header className="lg:hidden sticky top-0 left-0 right-0 h-16 px-5 flex items-center justify-between bg-[#101923]/95 backdrop-blur-xl border-b border-[#283039] z-[300]">
+        <header className="sticky left-0 right-0 top-0 z-[300] flex h-16 items-center justify-between border-b border-white/10 bg-[rgba(8,17,26,0.92)] px-5 backdrop-blur-[20px] lg:hidden">
             <div className="flex items-center gap-2">
-                <div className="flex items-center justify-center shrink-0">
-                    <img src="/logo.webp" alt="Logo" className="w-8 h-8 object-contain drop-shadow-[0_0_8px_rgba(57,224,121,0.5)]" />
-                </div>
-                <div className="font-heading font-bold text-lg text-white">
+                <div className="font-heading text-lg font-bold text-white">
                     MH<span className="text-[#39E079]">Metadata</span>
                 </div>
             </div>
             <button
                 onClick={onToggle}
-                className="w-10 h-10 flex items-center justify-center text-[#39E079] rounded-xl hover:bg-white/5"
+                className="flex h-10 w-10 items-center justify-center rounded-xl text-[#39E079] hover:bg-white/5"
             >
                 <span className="material-symbols-outlined">menu</span>
             </button>

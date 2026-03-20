@@ -1,6 +1,6 @@
 {
   "name": "MHStreams",
-  "short_name": "AIO",
+  "short_name": "MHStreams",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",
@@ -15,8 +15,8 @@
       "purpose": "maskable"
     }
   ],
-  "theme_color": "#ffffff",
+  "theme_color": "#0b141f",
   "start_url": ".",
-  "background_color": "#000000",
+  "background_color": "#0b141f",
   "display": "standalone"
 }

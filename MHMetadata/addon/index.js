@@ -4763,7 +4763,7 @@ addon.get("/rating", (req, res) => {
   res.redirect(`/stremio/${user}/rating?${params.toString()}`);
 });
 
-addon.use(favicon(path.join(__dirname, '../public/favicon.png')));
+addon.use(favicon(path.join(__dirname, '../public/favicon.ico')));
 addon.use('/configure', express.static(path.join(__dirname, '../dist')));
 addon.use(express.static(path.join(__dirname, '../public')));
 addon.use(express.static(path.join(__dirname, '../dist')));

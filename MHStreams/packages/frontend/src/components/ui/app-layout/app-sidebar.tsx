@@ -42,7 +42,7 @@ export function useAppSidebarContext() {
 export const AppSidebarAnatomy = defineStyleAnatomy({
   sidebar: cva([
     'UI-AppSidebar__sidebar',
-    'flex flex-grow flex-col overflow-y-auto border-r border-[#283039] bg-[#101923]',
+    'flex flex-grow flex-col overflow-y-auto border-r border-[rgba(255,255,255,0.1)] bg-[rgba(8,17,26,0.92)] backdrop-blur-[20px]',
   ]),
 });
 

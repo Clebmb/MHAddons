@@ -1845,7 +1845,7 @@ export function PresetManager() {
 
   return (
     <div className="mx-auto w-full max-w-6xl space-y-6 animate-fade-in">
-      <Card className="overflow-hidden border border-primary/10 bg-gradient-to-br from-primary/5 via-background to-background shadow-sm">
+      <Card className="overflow-hidden rounded-[24px] border border-white/10 bg-[rgba(22,35,52,0.8)] shadow-[0_30px_80px_rgba(0,0,0,0.35)] backdrop-blur-[16px]">
         <CardContent className="p-6 md:p-8 lg:p-10">
           <div className="flex flex-col gap-6">
             <div className="max-w-4xl space-y-4">
