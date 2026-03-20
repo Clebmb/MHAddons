@@ -43,7 +43,8 @@ Features:
 
 ### MHMetadata
 
-<img width="800" height="650" alt="zen_nUfh9peOzf" src="https://github.com/user-attachments/assets/75c20ed3-8694-4bc1-9ade-0bc87695c787" />
+<img width="800" height="650" alt="zen_cXkItn01az" src="https://github.com/user-attachments/assets/19106866-1e96-485b-8bd0-902f3a69f457" />
+
 
 `MHMetadata` is the metadata aggregation layer. It combines data from multiple sources for movies, series, anime, catalogs, artwork, streaming availability, and search.
 
