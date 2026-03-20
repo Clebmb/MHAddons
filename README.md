@@ -9,7 +9,11 @@ This repository contains the full local `MediaHoard` addon suite:
 - `MHTV`: live TV / IPTV addon
 - root dashboard: local launcher and status page for the full suite
 
-The goal of this repo is to let you run, develop, and manage all three addons together from one workspace.
+### *Upcoming Addons*
+ - MHSports
+ - MHMusic
+
+The goal of this repo is to let you run, develop, host, and manage all recommended MediaHoard addons together from one workspace.
 
 ## What’s In This Repo
 
