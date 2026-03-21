@@ -34,11 +34,11 @@ Mount `/app/data` inside the container to a persistent location on the host:
         container_name: aiostreams
         restart: unless-stopped
         ports:
-          - '3000:3000'
+          - '3201:3201'
         env_file:
           - .env
         healthcheck:
-          test: wget -qO- http://localhost:3000/health
+          test: wget -qO- http://localhost:3201/health
           interval: 1m
           timeout: 10s
           retries: 5
@@ -53,14 +53,14 @@ Mount `/app/data` inside the container to a persistent location on the host:
         container_name: aiostreams
         restart: unless-stopped
         ports:
-          - '3000:3000'
+          - '3201:3201'
         env_file:
           - .env
         volumes:
           - ./data:/app/data # ← required
         # Health check is now built-in; remove or update:
         # healthcheck:
-        #   test: wget -qO- http://localhost:3000/api/v1/status
+        #   test: wget -qO- http://localhost:3201/api/v1/status
         #   interval: 1m
         #   timeout: 10s
         #   retries: 5

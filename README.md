@@ -17,8 +17,8 @@ npm run dev
 That starts:
 
 - the root dashboard at `http://localhost:4100`
-- `MHStreams` on `http://localhost:3000`
-- `MHStreams` addon backend on `http://localhost:3001`
+- `MHStreams` on `http://localhost:3200`
+- `MHStreams` addon backend on `http://localhost:3201`
 - `MHMetadata` UI on `http://localhost:5173`
 - `MHMetadata` addon backend on `http://localhost:3232`
 - `MHTV` on `http://localhost:7000`
@@ -61,8 +61,8 @@ The dashboard links directly to all three addons and shows whether each main UI 
 These ports are reserved by the root dev runner:
 
 - `4100`: root dashboard
-- `3000`: `MHStreams` UI
-- `3001`: `MHStreams` addon backend
+- `3200`: `MHStreams` UI
+- `3201`: `MHStreams` addon backend
 - `5173`: `MHMetadata` UI
 - `3232`: `MHMetadata` addon backend
 - `7000`: `MHTV`

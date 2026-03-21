@@ -23,6 +23,24 @@ interface AddonConfig {
   castCount?: number;
 }
 
+export function getAddonBaseUrl(): string {
+  if (typeof window === 'undefined') {
+    return '';
+  }
+
+  const { protocol, hostname, port, origin } = window.location;
+
+  // In local dev the config UI runs on Vite, while the addon backend serves
+  // manifest/catalog/meta routes on 3232.
+  if (hostname === '127.0.0.1' || hostname === 'localhost') {
+    if (port === '5173') {
+      return `${protocol}//${hostname}:3232`;
+    }
+  }
+
+  return origin;
+}
+
 export function generateAddonUrl(config: AddonConfig): string {
   const configToEncode = {
     ...config,
@@ -53,5 +71,5 @@ export function generateAddonUrl(config: AddonConfig): string {
 
   const compressed = compressToEncodedURIComponent(JSON.stringify(cleanConfig));
   
-  return `${window.location.origin}/${compressed}/manifest.json`;
+  return `${getAddonBaseUrl()}/${compressed}/manifest.json`;
 }

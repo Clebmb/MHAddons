@@ -1,22 +1,40 @@
-// Initialize global HTTP proxy before any other imports that use undici
-import './utils/httpClient.js';
-
-import * as express from 'express';
-import { startServerWithCacheWarming } from './index.js';
-import { initializeMapper } from './lib/id-mapper.js';
-import { initializeAnimeListMapper } from './lib/anime-list-mapper.js';
-import { initializeMappings } from './lib/wiki-mapper.js';
-import { initializeRatings } from './lib/imdbRatings.js';
-import { runCacheCleanup } from './cache-cleanup.js';
-import { runCachePathMigration } from './lib/cache-path-migration.js';
-import { performVersionCleanup } from './lib/versionCleanup.js';
-import database from './lib/database.js';
+import 'dotenv/config';
 import consola from 'consola';
 
-
 const PORT: number = parseInt(process.env.PORT || '3232', 10);
+
+function applyDefaultEnvironment(): void {
+  if (!process.env.HOST_NAME) {
+    process.env.HOST_NAME = `http://127.0.0.1:${PORT}`;
+  }
+
+  if (!process.env.DATABASE_URI) {
+    process.env.DATABASE_URI = 'sqlite://addon/data/db.sqlite';
+  }
+
+  if (!process.env.REDIS_URL && process.env.NO_CACHE === undefined) {
+    process.env.NO_CACHE = 'true';
+  }
+}
  
 async function startServer(): Promise<void> {
+  applyDefaultEnvironment();
+
+  // Initialize modules only after env defaults are in place.
+  await import('./utils/httpClient.js');
+  const [{ startServerWithCacheWarming, getDashboardAPI }, { initializeMapper }, { initializeAnimeListMapper }, { initializeMappings }, { initializeRatings }, { runCacheCleanup }, { runCachePathMigration }, { performVersionCleanup }, databaseModule] = await Promise.all([
+    import('./index.js'),
+    import('./lib/id-mapper.js'),
+    import('./lib/anime-list-mapper.js'),
+    import('./lib/wiki-mapper.js'),
+    import('./lib/imdbRatings.js'),
+    import('./cache-cleanup.js'),
+    import('./lib/cache-path-migration.js'),
+    import('./lib/versionCleanup.js'),
+    import('./lib/database.js'),
+  ]);
+  const database = databaseModule.default;
+
   consola.info('--- Addon Starting Up ---');
  
   process.on('uncaughtException', (error: Error) => {
@@ -38,7 +56,8 @@ async function startServer(): Promise<void> {
   await database.initialize();
   consola.success('Database initialization complete.');
 
-  const redis = require('./lib/redisClient');
+  const redisModule = await import('./lib/redisClient.js');
+  const redis: any = redisModule.default ?? redisModule;
   if (redis && redis.status === 'end') {
     consola.info('Connecting Redis...');
     await redis.connect();
@@ -130,18 +149,16 @@ async function startServer(): Promise<void> {
   const addon: any = await startServerWithCacheWarming();
   
   // PHASE 4: Start background catalog warming (after server initialization)
-  const { startMALWarmup } = require('./lib/malCatalogWarmer.js');
+  const { startMALWarmup } = await import('./lib/malCatalogWarmer.js');
   startMALWarmup();
   
-  const { startComprehensiveCatalogWarming } = require('./lib/comprehensiveCatalogWarmer.js');
+  const { startComprehensiveCatalogWarming } = await import('./lib/comprehensiveCatalogWarmer.js');
   startComprehensiveCatalogWarming();
   
   // PHASE 5: Start cache cleanup scheduler
   consola.info('Starting cache cleanup scheduler...');
-  const { startCacheCleanupScheduler } = require('./lib/cacheCleanupScheduler.js');
-  
-  const indexModule = require('./index.js');
-  const dashboardApi = indexModule.getDashboardAPI();
+  const { startCacheCleanupScheduler } = await import('./lib/cacheCleanupScheduler.js');
+  const dashboardApi = getDashboardAPI();
   startCacheCleanupScheduler(dashboardApi);
   
   addon.listen(PORT, () => {

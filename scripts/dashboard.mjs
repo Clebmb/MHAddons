@@ -12,9 +12,9 @@ export const APPS = [
     name: 'MHStreams',
     description: 'Streaming media aggregation addon',
     icon: 'movie',
-    url: 'http://localhost:3000',
+    url: 'http://localhost:3200',
     links: [
-      { label: 'Open Addon', url: 'http://localhost:3000' },
+      { label: 'Open Addon', url: 'http://localhost:3200' },
     ],
   },
   {
@@ -383,7 +383,7 @@ function renderDashboard() {
       </div>
       <div class="meta-card">
         <div class="meta-label">Reserved Ports</div>
-        <div class="meta-value"><code>3000 3001 3232 5173 7000</code></div>
+        <div class="meta-value"><code>3200 3201 3232 5173 7000</code></div>
       </div>
     </section>
 

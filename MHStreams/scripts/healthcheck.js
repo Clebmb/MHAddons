@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import http from 'http';
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3201;
 
 function checkHealth(retries = 0) {
   const options = {

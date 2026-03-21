@@ -47,7 +47,7 @@ Koyeb is the best free option because it doesn't "sleep" like Render or Heroku, 
     | :--- | :--- |
     | `DATABASE_URI` | The URI you copied from Supabase (Step 1). |
     | `SECRET_KEY` | The 64-char hex string you generated (Step 2). |
-    | `PORT` | `3000` |
+    | `PORT` | `3201` |
 6.  Click **Deploy**.
 
 ---

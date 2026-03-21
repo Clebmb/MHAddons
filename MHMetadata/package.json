@@ -6,17 +6,17 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:server": "nodemon addon/server.js",
+    "dev:server": "npm run build:backend && node --watch dist/server.js",
     "dev:server:ts": "nodemon --exec ts-node addon/server.ts",
     "build": "vite build",
     "build:dev": "vite build --mode development",
-    "build:backend": "tsc -p tsconfig.backend.json",
+    "build:backend": "tsc -p tsconfig.backend.json && node scripts/write-dist-package.cjs",
     "build:backend:watch": "tsc -p tsconfig.backend.json --watch",
-    "start:backend": "node dist/server.js",
+    "start:backend": "npm run build:backend && node dist/server.js",
     "start:backend:ts": "ts-node addon/server.ts",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start": "node addon/server.js"
+    "start": "npm run start:backend"
   },
   "repository": {
     "type": "git",

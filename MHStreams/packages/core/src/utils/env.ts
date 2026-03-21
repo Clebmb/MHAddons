@@ -634,10 +634,10 @@ export const Env = cleanEnv(process.env, {
   BASE_URL: url({
     desc: 'Base URL of the addon, including protocol, hostname, and optionally port',
     example: 'https://mhstreams.example.com',
-    devDefault: `http://localhost:${process.env.PORT || 3000}`,
+    devDefault: `http://localhost:${process.env.PORT || 3201}`,
   }),
   INTERNAL_URL: url({
-    default: `http://localhost:${process.env.PORT || 3000}`,
+    default: `http://localhost:${process.env.PORT || 3201}`,
     desc: 'Internal URL of the addon, used for internal communication between built-in addons and the server',
   }),
   INTERNAL_SECRET: readonly({
@@ -653,7 +653,7 @@ export const Env = cleanEnv(process.env, {
     desc: 'ID of the addon',
   }),
   PORT: port({
-    default: 3000,
+    default: 3201,
     desc: 'Port to run the addon on',
   }),
   PTT_PORT: port({

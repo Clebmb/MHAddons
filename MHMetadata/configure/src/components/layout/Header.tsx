@@ -8,6 +8,7 @@ import { compressToEncodedURIComponent } from 'lz-string';
 import { BarChart3 } from 'lucide-react';
 import { ChangelogModal } from '../ChangelogBox';
 import { cn } from '@/lib/utils';
+import { getAddonBaseUrl } from '@/lib/config';
 export function Header({ currentPage }: { currentPage: string }) {
   const { addonVersion, config, setConfig, resetConfig, auth, setAuth, hasBuiltInTvdb, hasBuiltInTmdb } = useConfig();
   const [isInstallOpen, setIsInstallOpen] = useState(false);
@@ -83,7 +84,7 @@ export function Header({ currentPage }: { currentPage: string }) {
     const compressedConfig = compressToEncodedURIComponent(
       JSON.stringify(configToSerialize)
     );
-    const host = `${window.location.protocol}//${window.location.host}`;
+    const host = getAddonBaseUrl();
     const generatedManifestUrl = `${host}/stremio/preview/${compressedConfig}/manifest.json`;
     setManifestUrl(generatedManifestUrl);
     setIsInstallOpen(true);
@@ -95,7 +96,7 @@ export function Header({ currentPage }: { currentPage: string }) {
       <header className="mb-6 flex w-full justify-end">
         <Button
           onClick={() => {
-            const host = `${window.location.protocol}//${window.location.host}`;
+            const host = getAddonBaseUrl();
             window.open(`${host}/dashboard`, '_blank');
           }}
           variant="outline"
@@ -124,7 +125,7 @@ export function Header({ currentPage }: { currentPage: string }) {
         <div className="flex items-center gap-3 self-start sm:self-start">
           <Button
             onClick={() => {
-              const host = `${window.location.protocol}//${window.location.host}`;
+              const host = getAddonBaseUrl();
               window.open(`${host}/dashboard`, '_blank');
             }}
             variant="outline"

@@ -82,7 +82,7 @@ For full hot reload including the frontend:
   <Step>
     ### Change the server port
 
-    In your root `.env`, set `PORT` to something other than `3000` (e.g. `3001`). This is the port the backend server listens on.
+    In your root `.env`, set `PORT` to the backend dev port. This repo now uses `3201` by default.
 
   </Step>
 
@@ -92,7 +92,7 @@ For full hot reload including the frontend:
     Create a `.env.development` file in `packages/frontend/`:
 
     ```bash
-    NEXT_PUBLIC_BACKEND_BASE_URL=http://localhost:3001
+    NEXT_PUBLIC_BACKEND_BASE_URL=http://localhost:3201
     ```
 
     Adjust the port to match the one you set above.
@@ -106,7 +106,7 @@ For full hot reload including the frontend:
     pnpm dev
     ```
 
-    The Next.js dev server will automatically proxy API requests to the backend. The frontend will be available at `http://localhost:3000`.
+    The Next.js dev server will automatically proxy API requests to the backend. The frontend will be available at `http://localhost:3200`.
 
   </Step>
 </Steps>

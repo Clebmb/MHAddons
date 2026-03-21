@@ -85,6 +85,6 @@ COPY --from=runtime /runtime /app
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
   CMD ["/nodejs/bin/node", "/app/scripts/healthcheck.js"]
-EXPOSE ${PORT:-3000}
+EXPOSE ${PORT:-3201}
 
 CMD ["/app/packages/server/dist/server.js"]

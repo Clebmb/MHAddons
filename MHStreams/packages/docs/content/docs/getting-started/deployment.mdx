@@ -46,7 +46,7 @@ You can use a [free Oracle VPS](https://guides.viren070.me/selfhosting/oracle) o
 
   </Step>
   <Step>
-    Open `http://localhost:3000/stremio/configure` to complete setup.
+    Open `http://localhost:3201/stremio/configure` to complete setup.
   </Step>
 </Steps>
 
@@ -73,7 +73,7 @@ services:
     container_name: aiostreams
     restart: unless-stopped
     ports:
-      - 3000:3000
+      - 3201:3201
     env_file:
       - .env
     labels:
@@ -121,14 +121,14 @@ For a full compose template that includes popular self-hosted addons (Jackett, P
 
 ```bash
 # GitHub Container Registry
-docker run -p 8080:3000 \
+docker run -p 8080:3201 \
   -e BASE_URL=http://localhost:8080 \
   -e SECRET_KEY=Your64CharacterHexKeyGoesHere \
   -v aiostreams-data:/app/data \
   ghcr.io/viren070/aiostreams:latest
 
 # Docker Hub
-docker run -p 8080:3000 \
+docker run -p 8080:3201 \
   -e BASE_URL=http://localhost:8080 \
   -e SECRET_KEY=Your64CharacterHexKeyGoesHere \
   -v aiostreams-data:/app/data \
@@ -138,7 +138,7 @@ docker run -p 8080:3000 \
 Pass additional environment variables with `-e`:
 
 ```bash
-docker run -p 8080:3000 \
+docker run -p 8080:3201 \
   -e BASE_URL=http://localhost:8080 \
   -e SECRET_KEY=... \
   -e LOG_LEVEL=debug \
@@ -151,7 +151,7 @@ To build from source instead of using a prebuilt image:
 git clone https://github.com/Viren070/AIOStreams.git
 cd AIOStreams
 docker build -t aiostreams .
-docker run -p 8080:3000 \
+docker run -p 8080:3201 \
   -e BASE_URL=http://localhost:8080 \
   -e SECRET_KEY=Your64CharacterHexKeyGoesHere \
   aiostreams
@@ -225,7 +225,7 @@ These platforms offer free tiers that can run AIOStreams, but they are **not per
 
   </Step>
   <Step>
-    Open `http://localhost:3000/stremio/configure`.
+    Open `http://localhost:3201/stremio/configure`.
   </Step>
 </Steps>
 

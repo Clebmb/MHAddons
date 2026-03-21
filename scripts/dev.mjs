@@ -10,7 +10,7 @@ const __dirname = path.dirname(__filename);
 const repoRoot = path.resolve(__dirname, '..');
 
 const BACKEND_PORTS = [
-  { port: 3001, label: 'MHStreams addon API' },
+  { port: 3201, label: 'MHStreams addon API' },
   { port: 3232, label: 'MHMetadata addon API' },
 ];
 
@@ -39,6 +39,9 @@ const PROCESSES = [
     cwd: path.join(repoRoot, 'MHStreams'),
     ...commandSpec(localBin(path.join(repoRoot, 'MHStreams'), 'cross-env'), [
       'NODE_ENV=development',
+      'PORT=3201',
+      'BASE_URL=http://127.0.0.1:3201',
+      'INTERNAL_URL=http://127.0.0.1:3201',
       localBin(path.join(repoRoot, 'MHStreams'), 'tsx'),
       'watch',
       'packages/server/src/server.ts',
@@ -47,9 +50,24 @@ const PROCESSES = [
   {
     name: 'MHStreams UI',
     cwd: path.join(repoRoot, 'MHStreams/packages/frontend'),
-    ...commandSpec(localBin(path.join(repoRoot, 'MHStreams/packages/frontend'), 'next'), [
+    ...commandSpec(localBin(path.join(repoRoot, 'MHStreams'), 'cross-env'), [
+      'PORT=3200',
+      'NEXT_PUBLIC_BACKEND_BASE_URL=http://127.0.0.1:3201',
+      localBin(path.join(repoRoot, 'MHStreams/packages/frontend'), 'next'),
       'dev',
       '--turbopack',
+      '-p',
+      '3200',
+      '-H',
+      '127.0.0.1',
+    ]),
+  },
+  {
+    name: 'MHMetadata Backend Build',
+    cwd: path.join(repoRoot, 'MHMetadata'),
+    ...commandSpec('npm', [
+      'run',
+      'build:backend:watch',
     ]),
   },
   {
@@ -57,7 +75,7 @@ const PROCESSES = [
     cwd: path.join(repoRoot, 'MHMetadata'),
     ...commandSpec('node', [
       '--watch',
-      'addon/server.js',
+      'dist/server.js',
     ]),
   },
   {
@@ -189,6 +207,13 @@ async function ensureDependencies() {
     console.log(`${COLORS.yellow}${check.label} missing. Installing...${COLORS.reset}`);
     await check.install();
   }
+
+  await runSetup(
+    commandSpec('npm', ['run', 'build:backend']).command,
+    commandSpec('npm', ['run', 'build:backend']).args,
+    path.join(repoRoot, 'MHMetadata'),
+    'MHMetadata backend build'
+  );
 }
 
 function prefixStream(stream, name, color) {
