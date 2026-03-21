@@ -31,15 +31,17 @@ export async function listCatalogGroups(config) {
     }
     return [...new Set((data ?? []).map((row) => row.group_title))];
 }
-export async function searchChannels(config, search, groupTitle) {
+export async function searchChannels(config, search, groupTitle, options = {}) {
     if (!supabase) {
         return [];
     }
+    const skip = Math.max(0, options.skip ?? 0);
+    const limit = Math.max(1, options.limit ?? 20);
     let query = supabase
         .from("channels")
         .select("*, channel_streams!inner(source_id)")
         .order("name")
-        .limit(200);
+        .range(skip, skip + limit - 1);
     query = applyChannelFilters(query, config);
     if (groupTitle) {
         query = query.eq("group_title", groupTitle);

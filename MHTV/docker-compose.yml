@@ -10,16 +10,40 @@ services:
     environment:
       PORT: 7000
       BASE_URL: http://localhost:7000
+      KPTV_BASE_URL: http://kptv-fast:8080
       TVAPP_BASE_URL: http://tvapp:4124
       TVAPP_HEALTH_URL: http://tvapp:4124/api/health
-      TVAPP_M3U_PATH: /shared/tvapp/playlist.m3u8
-      TVAPP_XMLTV_PATH: /shared/tvapp/xmltv.xml
+      TVAPP_M3U_PATH: /shared/tvapp/www/playlist.m3u8
+      TVAPP_XMLTV_PATH: /shared/tvapp/www/xmltv.xml
     ports:
       - "7000:7000"
     volumes:
       - tvapp_shared:/shared/tvapp
+      - mhtv_data:/data
     depends_on:
+      - kptv-fast
       - tvapp
+
+  kptv-fast:
+    build:
+      context: ./kptv-fast
+      dockerfile: Dockerfile
+    container_name: kptv_fast
+    restart: unless-stopped
+    environment:
+      CACHE_DURATION: 7200
+      WARM_CACHE_ON_STARTUP: "true"
+      STARTUP_CACHE_DELAY: 10
+      WARM_EPG_ON_STARTUP: "true"
+      MAX_WORKERS: 5
+      PROVIDER_TIMEOUT: 60
+      ENABLED_PROVIDERS: all
+      GIT_COUNTRY: us,ca,uk
+      LG_COUNTRY: us,ca,uk
+      WHALE_COUNTRY: us
+      DEBUG: "false"
+    ports:
+      - "7080:8080"
 
   tvapp:
     image: ghcr.io/thebinaryninja/tvapp2:latest
@@ -37,3 +61,4 @@ services:
 
 volumes:
   tvapp_shared:
+  mhtv_data:

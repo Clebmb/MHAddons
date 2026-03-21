@@ -35,12 +35,22 @@ export const appConfig = {
   proxyReferer: process.env.PROXY_REFERER ?? "https://i.mjh.nz/",
   tvappBaseUrl: process.env.TVAPP_BASE_URL ?? "http://tvapp:4124",
   tvappHealthUrl: process.env.TVAPP_HEALTH_URL ?? "http://tvapp:4124/api/health",
-  tvappM3uPath: process.env.TVAPP_M3U_PATH ?? path.resolve("shared/tvapp/playlist.m3u8"),
-  tvappXmltvPath: process.env.TVAPP_XMLTV_PATH ?? path.resolve("shared/tvapp/xmltv.xml"),
+  tvappM3uPath: process.env.TVAPP_M3U_PATH ?? path.resolve("shared/tvapp/www/playlist.m3u8"),
+  tvappXmltvPath: process.env.TVAPP_XMLTV_PATH ?? path.resolve("shared/tvapp/www/xmltv.xml"),
+  xtreamBaseUrl: process.env.XTREAM_BASE_URL ?? "",
+  xtreamUsername: process.env.XTREAM_USERNAME ?? "",
+  xtreamPassword: process.env.XTREAM_PASSWORD ?? "",
+  xtreamRegion: process.env.XTREAM_REGION ?? "global",
+  xtreamXmltvUrl: process.env.XTREAM_XMLTV_URL ?? "",
+  kptvBaseUrl: process.env.KPTV_BASE_URL ?? "",
+  kptvRegion: process.env.KPTV_REGION ?? "global",
   mjhProviderUrls: splitCsv(process.env.MJH_PROVIDER_URLS).length
     ? splitCsv(process.env.MJH_PROVIDER_URLS)
     : defaultMjhProviderUrls,
-  mjhEpgUrls: splitCsv(process.env.MJH_EPG_URLS).length ? splitCsv(process.env.MJH_EPG_URLS) : defaultMjhEpgUrls
+  mjhEpgUrls: splitCsv(process.env.MJH_EPG_URLS).length ? splitCsv(process.env.MJH_EPG_URLS) : defaultMjhEpgUrls,
+  m3uProviderUrls: splitCsv(process.env.M3U_PROVIDER_URLS),
+  m3uEpgUrls: splitCsv(process.env.M3U_EPG_URLS),
+  m3uRegion: process.env.M3U_REGION ?? "global"
 };
 
 export const isSupabaseConfigured =

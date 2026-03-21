@@ -2,12 +2,28 @@ import type { AddonConfig } from "../lib/types.js";
 
 const supportsCatalog = (mode: AddonConfig["tvappMode"]) => mode !== "streams_only";
 const supportsStreams = (mode: AddonConfig["tvappMode"]) => mode !== "catalog_only";
+const locationLikeGroups = new Set([
+  "adelaide",
+  "au",
+  "brisbane",
+  "canberra",
+  "darwin",
+  "hobart",
+  "locals",
+  "melbourne",
+  "nz",
+  "perth",
+  "sydney",
+  "world"
+]);
+
+const shouldExposeGroupCatalog = (group: string) => !locationLikeGroups.has(group.trim().toLowerCase());
 
 export function buildManifest(baseUrl: string, configToken: string, groups: string[], config: AddonConfig) {
   const groupCatalogs =
     config.catalogLayout === "search_only"
       ? []
-      : groups.map((group) => ({
+      : groups.filter(shouldExposeGroupCatalog).map((group) => ({
           type: "tv",
           id: `group:${encodeURIComponent(group)}`,
           name: `MHTV - ${group}`,
@@ -42,29 +58,31 @@ export function buildManifest(baseUrl: string, configToken: string, groups: stri
 }
 
 export function getSourceOrder(config: AddonConfig) {
-  return config.sources.length ? config.sources : ["tvapp", "mjh"];
+  return config.sources.length ? config.sources : ["tvapp", "mjh", "kptv", "xtream", "m3u"];
 }
 
 export function getCatalogSources(config: AddonConfig) {
   return getSourceOrder(config).filter((sourceId) => {
-    if (sourceId === "tvapp") {
-      return supportsCatalog(config.tvappMode);
-    }
-    if (sourceId === "mjh") {
-      return supportsCatalog(config.mjhMode);
-    }
-    return true;
+    const modeBySource = {
+      kptv: config.kptvMode,
+      tvapp: config.tvappMode,
+      mjh: config.mjhMode,
+      xtream: config.xtreamMode,
+      m3u: config.m3uMode
+    } as const;
+    return supportsCatalog(modeBySource[sourceId as keyof typeof modeBySource] ?? "both");
   });
 }
 
 export function getStreamSourceOrder(config: AddonConfig) {
   return getSourceOrder(config).filter((sourceId) => {
-    if (sourceId === "tvapp") {
-      return supportsStreams(config.tvappMode);
-    }
-    if (sourceId === "mjh") {
-      return supportsStreams(config.mjhMode);
-    }
-    return true;
+    const modeBySource = {
+      kptv: config.kptvMode,
+      tvapp: config.tvappMode,
+      mjh: config.mjhMode,
+      xtream: config.xtreamMode,
+      m3u: config.m3uMode
+    } as const;
+    return supportsStreams(modeBySource[sourceId as keyof typeof modeBySource] ?? "both");
   });
 }

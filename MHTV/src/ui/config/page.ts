@@ -1,6 +1,7 @@
 import { encodeConfig, getDefaultConfig } from "./state.js";
 import { appConfig } from "../../lib/config.js";
 import { knownMjhFamilyOptions } from "../../lib/provider-options.js";
+import { hasKptvProvider, hasM3uProvider, hasXtreamProvider, loadProviderConfig } from "../../lib/provider-config.js";
 
 const mjhFamilyOptions = knownMjhFamilyOptions;
 const tvappFamilyOptions = [
@@ -23,6 +24,27 @@ const providerCards = [
     icon: "satellite_alt",
     description: "Broad regional playlists and XMLTV feeds pulled from i.mjh.nz.",
     badges: ["Regional feeds", "Remote playlist"]
+  },
+  {
+    id: "kptv",
+    title: "KPTV FAST",
+    icon: "hub",
+    description: "Unified FAST playlist and EPG from 20+ upstream free TV providers via kptv-fast.",
+    badges: ["FAST bundle", "Playlist + EPG"]
+  },
+  {
+    id: "xtream",
+    title: "Xtream Codes",
+    icon: "router",
+    description: "Xtream live channel API ingested from a configured IPTV server.",
+    badges: ["Account-based", "Live categories"]
+  },
+  {
+    id: "m3u",
+    title: "Custom M3U",
+    icon: "playlist_play",
+    description: "Direct remote M3U playlists with optional XMLTV guide data.",
+    badges: ["Playlist ingest", "Optional EPG"]
   }
 ] as const;
 
@@ -55,7 +77,7 @@ const renderProviderCards = () =>
           <div class="stack">
             <label class="switch-row">
               <span>Enable provider</span>
-              <input type="checkbox" name="source" value="${provider.id}" checked />
+              <input type="checkbox" name="source" value="${provider.id}" ${provider.id === "kptv" ? (hasKptvProvider(loadProviderConfig()) ? "checked" : "") : provider.id === "xtream" ? (hasXtreamProvider(loadProviderConfig()) ? "checked" : "") : provider.id === "m3u" ? (hasM3uProvider(loadProviderConfig()) ? "checked" : "") : "checked"} />
             </label>
             <div class="subsection">
               <p class="eyebrow">Priority</p>
@@ -101,7 +123,8 @@ const renderProviderCards = () =>
                         )
                         .join("")}
                     </div>`
-                  : `<p class="helper-text">Best for broader regional coverage and backup playlists.</p>
+                  : provider.id === "mjh"
+                  ? `<p class="helper-text">Best for broader regional coverage and backup playlists.</p>
                     ${
                       mjhFamilyOptions.length
                         ? `<div class="family-grid">
@@ -118,6 +141,27 @@ const renderProviderCards = () =>
                           </div>`
                         : `<p class="helper-text">No i.mjh.nz source directories are currently available.</p>`
                     }`
+                  : provider.id === "kptv"
+                  ? `<p class="helper-text">Consumes kptv-fast's <code>/playlist</code> and <code>/epg</code>, which bundle Pluto, Plex, Samsung, Tubi, Xumo, LG, Stirr, Roku, Whale, and more into one upstream source.</p>
+                    <div class="setup-grid">
+                      <label class="field field-full"><span>KPTV Base URL</span><input id="kptv-base-url" type="text" value="${loadProviderConfig().kptvBaseUrl}" placeholder="http://kptv-fast:8080" /></label>
+                      <label class="field"><span>Region</span><input id="kptv-region" type="text" value="${loadProviderConfig().kptvRegion}" placeholder="global" /></label>
+                    </div>`
+                  : provider.id === "xtream"
+                  ? `<p class="helper-text">Uses PlayTorrio-style Xtream login flow, but keeps credentials on the MHTV server instead of inside the manifest URL.</p>
+                    <div class="setup-grid">
+                      <label class="field"><span>Server URL</span><input id="xtream-base-url" type="text" value="${loadProviderConfig().xtreamBaseUrl}" placeholder="http://server:8080" /></label>
+                      <label class="field"><span>Username</span><input id="xtream-username" type="text" value="${loadProviderConfig().xtreamUsername}" placeholder="username" /></label>
+                      <label class="field"><span>Password</span><input id="xtream-password" type="password" value="${loadProviderConfig().xtreamPassword}" placeholder="password" /></label>
+                      <label class="field"><span>Region</span><input id="xtream-region" type="text" value="${loadProviderConfig().xtreamRegion}" placeholder="global" /></label>
+                      <label class="field field-full"><span>XMLTV URL Override</span><input id="xtream-xmltv-url" type="text" value="${loadProviderConfig().xtreamXmltvUrl}" placeholder="Optional custom XMLTV URL" /></label>
+                    </div>`
+                  : `<p class="helper-text">Uses PlayTorrio-style direct M3U playlist mode, but stores the playlist URLs on the MHTV server.</p>
+                    <div class="setup-grid">
+                      <label class="field field-full"><span>M3U URLs</span><textarea id="m3u-provider-urls" rows="4" placeholder="One URL per line">${loadProviderConfig().m3uProviderUrls.join("\n")}</textarea></label>
+                      <label class="field field-full"><span>XMLTV URLs</span><textarea id="m3u-epg-urls" rows="3" placeholder="Optional, one URL per line">${loadProviderConfig().m3uEpgUrls.join("\n")}</textarea></label>
+                      <label class="field"><span>Region</span><input id="m3u-region" type="text" value="${loadProviderConfig().m3uRegion}" placeholder="global" /></label>
+                    </div>`
               }
             </div>
           </div>
@@ -129,10 +173,10 @@ const renderProviderCards = () =>
 const renderRegionOptions = () =>
   regionOptions
     .map(
-      ([value, label], index) => `
+      ([value, label]) => `
         <label class="selection-row glass-card">
           <span>${label}</span>
-          <input type="checkbox" name="region" value="${value}" ${index === 0 ? "checked" : ""} />
+          <input type="checkbox" name="region" value="${value}" />
         </label>
       `
     )
@@ -199,6 +243,10 @@ export function renderConfigPage() {
         <button class="btn btn-primary sidebar-action" id="generate-sidebar" type="button">
           <span class="material-symbols-outlined">bolt</span>
           Generate Install URL
+        </button>
+        <button class="btn btn-outline sidebar-action" id="save-provider-setup" type="button">
+          <span class="material-symbols-outlined">save</span>
+          Save Provider Setup
         </button>
       </div>
     </aside>
@@ -387,13 +435,44 @@ export function renderConfigPage() {
         resolution: document.getElementById('resolution').value,
         streamValidation: document.getElementById('stream-validation').value,
         catalogLayout: document.getElementById('catalog-layout').value,
+        kptvMode: document.getElementById('kptv-mode')?.value || 'both',
         tvappMode: document.getElementById('tvapp-mode').value,
         mjhMode: document.getElementById('mjh-mode').value,
+        xtreamMode: document.getElementById('xtream-mode')?.value || 'both',
+        m3uMode: document.getElementById('m3u-mode')?.value || 'both',
         tvappSourceFamilies: Array.from(document.querySelectorAll('input[name="tvapp-family"]:checked')).map((input) => input.value),
         mjhFeedFamilies: Array.from(document.querySelectorAll('input[name="mjh-family"]:checked')).map((input) => input.value),
         includeGroups: [],
         excludeGroups: []
       };
+    };
+
+    const buildProviderSetup = () => ({
+      kptvBaseUrl: document.getElementById('kptv-base-url')?.value?.trim() || '',
+      kptvRegion: document.getElementById('kptv-region')?.value?.trim() || 'global',
+      xtreamBaseUrl: document.getElementById('xtream-base-url')?.value?.trim() || '',
+      xtreamUsername: document.getElementById('xtream-username')?.value?.trim() || '',
+      xtreamPassword: document.getElementById('xtream-password')?.value || '',
+      xtreamRegion: document.getElementById('xtream-region')?.value?.trim() || 'global',
+      xtreamXmltvUrl: document.getElementById('xtream-xmltv-url')?.value?.trim() || '',
+      m3uProviderUrls: (document.getElementById('m3u-provider-urls')?.value || '').split(/\\r?\\n/).map((entry) => entry.trim()).filter(Boolean),
+      m3uEpgUrls: (document.getElementById('m3u-epg-urls')?.value || '').split(/\\r?\\n/).map((entry) => entry.trim()).filter(Boolean),
+      m3uRegion: document.getElementById('m3u-region')?.value?.trim() || 'global'
+    });
+
+    const saveProviderSetup = async () => {
+      const response = await fetch('/api/provider-config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(buildProviderSetup())
+      });
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({ error: 'Failed to save provider setup.' }));
+        throw new Error(error.error || 'Failed to save provider setup.');
+      }
+
+      return response.json();
     };
 
     const updateUrls = () => {
@@ -447,6 +526,14 @@ export function renderConfigPage() {
     });
 
     document.getElementById('generate-sidebar').addEventListener('click', openModal);
+    document.getElementById('save-provider-setup').addEventListener('click', async () => {
+      try {
+        await saveProviderSetup();
+        alert('Provider setup saved. Re-run ingestion to pull the new sources.');
+      } catch (error) {
+        alert(error instanceof Error ? error.message : 'Failed to save provider setup.');
+      }
+    });
     document.getElementById('close-modal').addEventListener('click', closeModal);
     modalOverlay.addEventListener('click', closeModal);
 

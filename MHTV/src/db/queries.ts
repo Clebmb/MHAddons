@@ -45,16 +45,24 @@ export async function listCatalogGroups(config: AddonConfig) {
   return [...new Set((data ?? []).map((row) => row.group_title as string))];
 }
 
-export async function searchChannels(config: AddonConfig, search?: string, groupTitle?: string) {
+export async function searchChannels(
+  config: AddonConfig,
+  search?: string,
+  groupTitle?: string,
+  options: { skip?: number; limit?: number } = {}
+) {
   if (!supabase) {
     return [];
   }
+
+  const skip = Math.max(0, options.skip ?? 0);
+  const limit = Math.max(1, options.limit ?? 20);
 
   let query = supabase
     .from("channels")
     .select("*, channel_streams!inner(source_id)")
     .order("name")
-    .limit(200);
+    .range(skip, skip + limit - 1);
 
   query = applyChannelFilters(query, config);
 

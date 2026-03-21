@@ -32,6 +32,7 @@ export const APPS = [
     name: 'MHTV',
     description: 'Live TV/IPTV Addon',
     icon: 'live_tv',
+    badge: 'EXPERIMENTAL',
     url: 'http://localhost:7000',
     links: [{ label: 'Open Addon', url: 'http://localhost:7000' }],
   },
@@ -74,6 +75,7 @@ function renderDashboard() {
             <div class="addon-title">
               <span class="material-symbols-outlined addon-icon">${app.icon}</span>
               <h2>${app.name}</h2>
+              ${app.badge ? `<span class="badge badge-warning">${app.badge}</span>` : ''}
             </div>
           </div>
           <span class="status" data-status="${app.id}">Checking</span>
@@ -279,11 +281,30 @@ function renderDashboard() {
       display: flex;
       align-items: center;
       gap: 12px;
+      flex-wrap: wrap;
     }
 
     .addon-icon {
       color: var(--accent);
       font-size: 1.5rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 0 10px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .badge-warning {
+      background: rgba(255, 210, 70, 0.18);
+      border: 1px solid rgba(255, 210, 70, 0.38);
+      color: #ffd246;
     }
 
     .status {

@@ -14,15 +14,43 @@ import { stremioManifestRateLimiter } from '../../middlewares/ratelimit.js';
 const logger = createLogger('server');
 const router: Router = Router();
 
+const DEFAULT_DESCRIPTION =
+  'MHStreams aggregates streams from multiple MediaHoard/Stremio addons and services into one configurable addon.';
+
 export default router;
 
 router.use(stremioManifestRateLimiter);
 
-const manifest = async (config?: UserData): Promise<Manifest> => {
+const resolveBaseUrl = (req: Request): string => {
+  if (Env.BASE_URL) {
+    return Env.BASE_URL;
+  }
+
+  const host = req.get('host');
+  if (!host) {
+    return `http://127.0.0.1:${Env.PORT}`;
+  }
+
+  return `${req.protocol}://${host}`;
+};
+
+const resolveDescription = (config?: UserData): string => {
+  const description = config?.addonDescription?.trim() || Env.DESCRIPTION?.trim();
+  if (!description || description.toLowerCase() === 'unknown') {
+    return DEFAULT_DESCRIPTION;
+  }
+  return description;
+};
+
+const manifest = async (
+  req: Request,
+  config?: UserData
+): Promise<Manifest> => {
   let addonId = Env.ADDON_ID;
   if (config) {
     addonId = addonId += `.${config.uuid?.substring(0, 12)}`;
   }
+  const baseUrl = resolveBaseUrl(req);
   let catalogs: Manifest['catalogs'] = [];
   let resources: Manifest['resources'] = [];
   let addonCatalogs: Manifest['addonCatalogs'] = [];
@@ -39,7 +67,7 @@ const manifest = async (config?: UserData): Promise<Manifest> => {
     name: config?.addonName || Env.ADDON_NAME,
     id: addonId,
     version: Env.VERSION === 'unknown' ? '0.0.0' : Env.VERSION,
-    description: config?.addonDescription || Env.DESCRIPTION,
+    description: resolveDescription(config),
     catalogs,
     resources,
     types: resources.reduce((types, resource) => {
@@ -49,9 +77,8 @@ const manifest = async (config?: UserData): Promise<Manifest> => {
     }, [] as string[]),
     logo:
       config?.addonLogo ||
-      `https://raw.githubusercontent.com/Viren070/MHStreams/refs/heads/main/packages/frontend/public/logo${
-        Env.ALTERNATE_DESIGN ? '_alt' : ''
-      }.png`,
+      `${baseUrl}/logo.webp`,
+    background: `${baseUrl}/logo.webp`,
     behaviorHints: {
       configurable: true,
       configurationRequired: config ? false : true,
@@ -70,7 +97,7 @@ const manifest = async (config?: UserData): Promise<Manifest> => {
 router.get('/', async (req: Request, res: Response<Manifest>, next) => {
   logger.debug('Manifest request received', { userData: req.userData });
   try {
-    res.status(200).json(await manifest(req.userData));
+    res.status(200).json(await manifest(req, req.userData));
   } catch (error) {
     logger.error(`Failed to generate manifest: ${error}`);
     next(new APIError(constants.ErrorCode.INTERNAL_SERVER_ERROR));

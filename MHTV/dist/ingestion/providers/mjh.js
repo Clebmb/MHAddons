@@ -16,8 +16,20 @@ const fetchText = async (url) => {
     return response.text();
 };
 const inferRegion = (url) => {
-    const match = url.match(/\/([a-z]{2})\.(m3u8|xml)$/i);
-    return match ? match[1].toLowerCase() : "global";
+    try {
+        const pathname = new URL(url).pathname.split("/").filter(Boolean);
+        const family = pathname[0]?.toLowerCase();
+        if (!family || family === "all" || family === "world") {
+            return "global";
+        }
+        if (family === "nzau") {
+            return "au";
+        }
+        return family;
+    }
+    catch {
+        return "global";
+    }
 };
 export class MjhProvider extends BaseProvider {
     id = "mjh";

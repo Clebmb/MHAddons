@@ -1,15 +1,29 @@
 import { appConfig } from "../../lib/config.js";
 import { knownMjhFamilyOptions, listMjhFamilyOptions } from "../../lib/provider-options.js";
+import { hasKptvProvider, hasM3uProvider, hasXtreamProvider } from "../../lib/provider-config.js";
 const defaultMjhFamilies = listMjhFamilyOptions(appConfig.mjhProviderUrls).map((option) => option.id);
 const allKnownMjhFamilies = knownMjhFamilyOptions.map((option) => option.id);
+const defaultSources = ["tvapp", "mjh"];
+if (hasKptvProvider()) {
+    defaultSources.push("kptv");
+}
+if (hasXtreamProvider()) {
+    defaultSources.push("xtream");
+}
+if (hasM3uProvider()) {
+    defaultSources.push("m3u");
+}
 const defaultConfig = {
-    sources: ["tvapp", "mjh"],
-    regions: ["us"],
+    sources: defaultSources,
+    regions: [],
     resolution: "source_priority",
     streamValidation: "balanced",
     catalogLayout: "grouped",
+    kptvMode: "both",
     tvappMode: "both",
     mjhMode: "both",
+    xtreamMode: "both",
+    m3uMode: "both",
     tvappSourceFamilies: ["thetvapp", "tvpass", "moveonjoy"],
     mjhFeedFamilies: allKnownMjhFamilies.length ? allKnownMjhFamilies : defaultMjhFamilies,
     includeGroups: [],
@@ -30,8 +44,11 @@ export function decodeConfig(value) {
             resolution: parsed.resolution ?? defaultConfig.resolution,
             streamValidation: parsed.streamValidation ?? defaultConfig.streamValidation,
             catalogLayout: parsed.catalogLayout ?? defaultConfig.catalogLayout,
+            kptvMode: parsed.kptvMode ?? defaultConfig.kptvMode,
             tvappMode: parsed.tvappMode ?? defaultConfig.tvappMode,
             mjhMode: parsed.mjhMode ?? defaultConfig.mjhMode,
+            xtreamMode: parsed.xtreamMode ?? defaultConfig.xtreamMode,
+            m3uMode: parsed.m3uMode ?? defaultConfig.m3uMode,
             tvappSourceFamilies: parsed.tvappSourceFamilies?.length
                 ? parsed.tvappSourceFamilies
                 : defaultConfig.tvappSourceFamilies,

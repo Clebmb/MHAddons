@@ -4,7 +4,11 @@ export async function buildCatalog(type, id, extra, config) {
         return { metas: [] };
     }
     const groupTitle = id.startsWith("group:") ? decodeURIComponent(id.replace(/^group:/, "")) : undefined;
-    const channels = await searchChannels(config, extra.search, groupTitle);
+    const skip = Number.parseInt(extra.skip ?? "0", 10);
+    const channels = await searchChannels(config, extra.search, groupTitle, {
+        skip: Number.isFinite(skip) ? skip : 0,
+        limit: 20
+    });
     return {
         metas: channels.map((channel) => ({
             id: channel.stremio_id,

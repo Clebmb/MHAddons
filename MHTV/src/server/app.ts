@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import path from "node:path";
 import { appConfig } from "../lib/config.js";
+import { loadProviderConfig, saveProviderConfig } from "../lib/provider-config.js";
 import { createAddonInterface } from "../addon/router.js";
 import { proxyStream } from "./proxy.js";
 import { renderConfigPage } from "../ui/config/page.js";
@@ -18,6 +19,18 @@ export function createApp() {
 
   app.get("/health", (_req, res) => {
     res.json({ ok: true });
+  });
+
+  app.get("/api/provider-config", (_req, res) => {
+    res.json(loadProviderConfig());
+  });
+
+  app.post("/api/provider-config", (req, res, next) => {
+    try {
+      res.json(saveProviderConfig(req.body ?? {}));
+    } catch (error) {
+      next(error);
+    }
   });
 
   app.get("/proxy", proxyStream);

@@ -4,8 +4,11 @@ export interface AddonConfig {
   resolution: "prefer_hd" | "prefer_sd" | "source_priority";
   streamValidation: "balanced" | "fast" | "strict";
   catalogLayout: "grouped" | "search_only";
+  kptvMode: "both" | "catalog_only" | "streams_only";
   tvappMode: "both" | "catalog_only" | "streams_only";
   mjhMode: "both" | "catalog_only" | "streams_only";
+  xtreamMode: "both" | "catalog_only" | "streams_only";
+  m3uMode: "both" | "catalog_only" | "streams_only";
   tvappSourceFamilies: string[];
   mjhFeedFamilies: string[];
   includeGroups: string[];

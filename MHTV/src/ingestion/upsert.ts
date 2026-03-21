@@ -5,6 +5,63 @@ import type { ProviderIngestionResult } from "../lib/types.js";
 const searchable = (channel: ProviderIngestionResult["channels"][number]) =>
   [channel.name, channel.groupTitle, channel.sourceId, ...channel.aliases].filter(Boolean).join(" ");
 
+const dedupeBy = <T>(items: T[], keyFn: (item: T) => string) => {
+  const seen = new Set<string>();
+  return items.filter((item) => {
+    const key = keyFn(item);
+    if (seen.has(key)) {
+      return false;
+    }
+    seen.add(key);
+    return true;
+  });
+};
+
+const consolidateChannels = (channels: ProviderIngestionResult["channels"]) => {
+  const merged = new Map<string, ProviderIngestionResult["channels"][number]>();
+
+  for (const channel of channels) {
+    const existing = merged.get(channel.stremioId);
+    if (!existing) {
+      merged.set(channel.stremioId, {
+        ...channel,
+        aliases: dedupeBy(channel.aliases, (alias) => alias),
+        streams: dedupeBy(
+          channel.streams.map((stream) => ({ ...stream })),
+          (stream) => `${stream.sourceId}:${stream.streamUrl}`
+        )
+      });
+      continue;
+    }
+
+    merged.set(channel.stremioId, {
+      ...existing,
+      name: existing.name || channel.name,
+      tvgId: existing.tvgId || channel.tvgId,
+      tvgName: existing.tvgName || channel.tvgName,
+      tvgLogo: existing.tvgLogo || channel.tvgLogo,
+      groupTitle: existing.groupTitle || channel.groupTitle,
+      region: existing.region || channel.region,
+      countryCode: existing.countryCode || channel.countryCode,
+      language: existing.language || channel.language,
+      quality: existing.quality || channel.quality,
+      website: existing.website || channel.website,
+      description: existing.description || channel.description,
+      metadata: {
+        ...existing.metadata,
+        ...channel.metadata
+      },
+      aliases: dedupeBy([...existing.aliases, ...channel.aliases], (alias) => alias),
+      streams: dedupeBy(
+        [...existing.streams, ...channel.streams.map((stream) => ({ ...stream }))],
+        (stream) => `${stream.sourceId}:${stream.streamUrl}`
+      )
+    });
+  }
+
+  return Array.from(merged.values());
+};
+
 export async function persistProviderResult(result: ProviderIngestionResult) {
   if (!supabase) {
     logger.warn("Skipping persistence because Supabase is not configured", { provider: result.source.id });
@@ -25,7 +82,9 @@ export async function persistProviderResult(result: ProviderIngestionResult) {
     throw sourceError;
   }
 
-  const channelRows = result.channels.map((channel) => ({
+  const consolidatedChannels = consolidateChannels(result.channels);
+
+  const channelRows = consolidatedChannels.map((channel) => ({
     stremio_id: channel.stremioId,
     canonical_slug: channel.canonicalSlug,
     name: channel.name,
@@ -65,7 +124,7 @@ export async function persistProviderResult(result: ProviderIngestionResult) {
     }
   }
 
-  const streamRows = result.channels.flatMap((channel) => {
+  const streamRows = consolidatedChannels.flatMap((channel) => {
     const channelId = channelByStremioId.get(channel.stremioId);
     if (!channelId) {
       return [];
@@ -86,8 +145,13 @@ export async function persistProviderResult(result: ProviderIngestionResult) {
     }));
   });
 
-  if (streamRows.length) {
-    const { error } = await supabase.from("channel_streams").upsert(streamRows, {
+  const dedupedStreamRows = dedupeBy(
+    streamRows,
+    (row) => `${row.channel_id}:${row.source_id}:${row.stream_url}`
+  );
+
+  if (dedupedStreamRows.length) {
+    const { error } = await supabase.from("channel_streams").upsert(dedupedStreamRows, {
       onConflict: "channel_id,source_id,stream_url"
     });
     if (error) {
@@ -126,7 +190,7 @@ export async function persistProviderResult(result: ProviderIngestionResult) {
   await supabase.from("ingestion_runs").insert({
     source_id: result.source.id,
     status: "success",
-    channels_seen: result.channels.length,
+    channels_seen: consolidatedChannels.length,
     programmes_seen: programmeRows.length,
     stats: { feeds: result.feeds }
   });

@@ -22,7 +22,7 @@ const host = process.env.HOST_NAME && process.env.HOST_NAME.startsWith('http')
 // Allow logo override via env var
 const manifestLogoUrl = process.env.ADDON_LOGO_URL && process.env.ADDON_LOGO_URL.trim() !== ''
   ? process.env.ADDON_LOGO_URL.trim()
-  : `${host}/logo.png`;
+  : `${host}/logo.webp`;
 
 // Manifest cache TTL (5 minutes)
 const MANIFEST_CACHE_TTL = 5 * 60;
@@ -1331,9 +1331,9 @@ async function getManifest(config) {
     id: packageJson.name,
     version: packageJson.version,
     logo: manifestLogoUrl,
-    background: `${host}/background.png`,
+    background: `${host}/logo.webp`,
     name: addonName,
-    description: "A metadata addon for power users. MHMetadata uses TMDB, TVDB, TVMaze, MyAnimeList, IMDB and Fanart.tv to provide accurate data for movies, series, and anime. You choose the source.",
+    description: "MHMetadata aggregates metadata from multiple MediaHoard/Stremio sources and providers into one configurable addon.",
     resources,
     types: ["movie", "series", "anime.movie", "anime.series", "anime", "Trakt", "collection"],
     idPrefixes: ["tmdb:", "tt", "tvdb:", "mal:", "tvmaze:", "kitsu:", "anidb:", "anilist:", "tvdbc:", "upnext_", "unwatched_", "mdblist_upnext_"],
